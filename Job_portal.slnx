@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Job_portal.API/Job_portal.API.csproj" />
+  <Project Path="Job_portal.Application/Job_portal.Application.csproj" />
+  <Project Path="Job_portal.Domain/Job_portal.Domain.csproj" />
+  <Project Path="Job_Portal.Infrastructure/Job_Portal.Infrastructure.csproj" DisplayName="Job_portal.Infrastructure" />
+</Solution>

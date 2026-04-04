@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Sensitive files — NEVER commit these
+**/appsettings.json
+**/appsettings.*.json
+
+# Keep example file
+!**/appsettings.example.json
+
+# Migrations (optional — some keep these)
+# **/Migrations/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Uploads folder — don't commit user files
+**/wwwroot/uploads/
