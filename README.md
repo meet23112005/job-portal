@@ -2,9 +2,13 @@
 
 A full-stack job portal built with **ASP.NET Core** (.NET 10) on the backend and **React + Vite** on the frontend. The backend follows Clean Architecture with CQRS pattern, and the frontend connects to it via a RESTful API with JWT-based authentication.
 
+---
+
 ## What This Project Does
+
 Students can browse jobs, apply with a cover letter, save jobs for later, and track application statuses. Recruiters can post jobs under their companies, view applicants, and accept or reject them. An admin panel gives full visibility into users, companies, and jobs.
 
+---
 
 ## Tech Stack
 
@@ -30,6 +34,8 @@ Students can browse jobs, apply with a cover letter, save jobs for later, and tr
 ---
 
 ## Project Structure
+
+```
 Job_portal/
 ├── Domain/                  → Entities, Enums (no dependencies)
 ├── Application/             → Business logic, CQRS handlers, DTOs, Interfaces
@@ -54,10 +60,13 @@ Job_portal/
 └── API/                     → Controllers, Middleware, Program.cs
     ├── Controllers/
     └── Middleware/          → ExceptionHandlingMiddleware
+```
 
-# API Endpoints
+---
 
-## Auth — `/api/v1/user`
+## API Endpoints
+
+### Auth — `/api/v1/user`
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
 | POST | `/register` | ❌ | Register student or recruiter |
@@ -69,7 +78,7 @@ Job_portal/
 | GET | `/getAllJobSeeker` | 🔐 Admin | All students |
 | DELETE | `/removeUser/{id}` | 🔐 Admin | Hard delete user |
 
-## Companies — `/api/v1/company`
+### Companies — `/api/v1/company`
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
 | GET | `/get` | 🏢 Recruiter | Get own companies |
@@ -79,7 +88,7 @@ Job_portal/
 | PUT | `/deleteCompany/{id}` | 🏢 Recruiter | Soft delete company |
 | GET | `/getAllCompany` | 🔐 Admin | All companies |
 
-## Jobs — `/api/v1/job`
+### Jobs — `/api/v1/job`
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
 | GET | `/get` | ❌ | Browse jobs with filters + pagination |
@@ -92,7 +101,7 @@ Job_portal/
 | POST | `/save/{jobId}` | 👤 Student | Save a job |
 | DELETE | `/unsave/{jobId}` | 👤 Student | Remove saved job |
 
-## Applications — `/api/v1/application`
+### Applications — `/api/v1/application`
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
 | GET | `/get` | 👤 Student | Student's applied jobs |
@@ -100,7 +109,7 @@ Job_portal/
 | GET | `/{jobId}/applicants` | 🏢 Recruiter | View job applicants |
 | POST | `/status/{id}/update` | 🏢 Recruiter | Accept or reject applicant |
 
-## Admin — `/api/v1/admin`
+### Admin — `/api/v1/admin`
 | Method | Route | Auth | Description |
 |--------|-------|------|-------------|
 | POST | `/login` | ❌ | Admin login |
@@ -108,6 +117,73 @@ Job_portal/
 
 ---
 
+## Local Setup
+
+### Prerequisites
+- .NET 10 SDK
+- SQL Server (LocalDB works fine)
+- Node.js 18+
+- (Optional) Cloudinary account for file uploads
+
+### Backend
+
+**1. Clone the repo**
+```bash
+git clone https://github.com/yourusername/job-portal-backend.git
+cd job-portal-backend
+```
+
+**2. Create `appsettings.json` from example**
+```bash
+cp API/appsettings.example.json API/appsettings.json
+```
+
+**3. Fill in your values in `appsettings.json`**
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.;Database=JobPortalDb;Trusted_Connection=True;TrustServerCertificate=True"
+  },
+  "Jwt": {
+    "Secret": "your-32-character-secret-key-here!!",
+    "Issuer": "JobPortalAPI",
+    "Audience": "JobPortalClient"
+  },
+  "Admin": {
+    "Email": "admin@gmail.com",
+    "Password": "admin123"
+  },
+  "Cloudinary": {
+    "CloudName": "your_cloud_name",
+    "ApiKey": "your_api_key",
+    "ApiSecret": "your_api_secret"
+  }
+}
+```
+
+**4. Run migrations**
+```bash
+dotnet ef database update --project Infrastructure --startup-project API
+```
+
+**5. Start the API**
+```bash
+cd API
+dotnet run
+```
+
 API runs at `https://localhost:44331`
 Swagger UI at `https://localhost:44331/swagger`
 
+---
+
+
+## Contributing
+
+This project was built as a learning exercise. PRs are welcome for bug fixes or improvements. Open an issue first for larger changes.
+
+---
+
+## License
+
+MIT
