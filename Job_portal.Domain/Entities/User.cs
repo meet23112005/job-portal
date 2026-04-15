@@ -15,6 +15,11 @@ namespace Job_portal.Domain.Entities
         public UserRole Role { get; set; }
         public bool IsRemoved { get; set; } = false;
 
+        public bool IsEmailConfirmed { get; set; } = false;
+        public string? EmailConfirmationToken { get; set; }
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpiresAt { get; set; } // expires in 1 hour
+
         public UserProfile? Profile { get; set; }
 
         public ICollection<Company> Companies { get; set; } = new List<Company>();

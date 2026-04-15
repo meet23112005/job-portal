@@ -2,11 +2,15 @@
 using Job_portal.Application.Features.Admin.Queries.GetAllJobSeekers;
 using Job_portal.Application.Features.Admin.Queries.GetAllRecruiters;
 using Job_portal.Application.Features.Admin.Queries.GetAllUsers;
+using Job_portal.Application.Features.Auth.Commands.ConfirmEmail;
+using Job_portal.Application.Features.Auth.Commands.ForgotPassword;
 using Job_portal.Application.Features.Auth.Commands.Login;
 using Job_portal.Application.Features.Auth.Commands.Register;
+using Job_portal.Application.Features.Auth.Commands.ResetPassword;
 using Job_portal.Application.Features.Auth.Commands.UpdateProfileCommand;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -23,7 +27,7 @@ namespace Job_portal.API.Controllers
             _mediator = mediator;
         }
 
-        // ── POST /api/v1/user/register ─────────────────────
+        //POST /api/v1/user/register 
         // no auth required — public endpoint
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] RegisterRequest request)
@@ -50,16 +54,58 @@ namespace Job_portal.API.Controllers
             if (!result.Success)
                 return BadRequest(new { success = false, message = result.Message });
 
-            // set JWT token in HttpOnly cookie
-            SetTokenCookie(result.Token!);
-
             return Ok(new
             {
                 success = true,
                 message = result.Message,
-                user = result.User
             });
         }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string token)
+        {
+            var result = await _mediator.Send(new ConfirmEmailCommand
+            {
+                Token = token
+            });
+
+            if (!result.Success)
+                return BadRequest(new { success = false, message = result.Message });
+
+            // Redirect to login page after confirmation
+            return Redirect("http://localhost:5173/login?confirmed=true");
+        }
+
+        // POST /api/v1/user/forgot-password
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var result = await _mediator.Send(new ForgotPasswordCommand
+            {
+                Email = request.Email
+            });
+
+            // always return 200 — don't reveal if email exists
+            return Ok(new { success = true, message = result.Message });
+        }
+
+        // POST /api/v1/user/reset-password
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var result = await _mediator.Send(new ResetPasswordCommand
+            {
+                Token = request.Token,
+                NewPassword = request.NewPassword,
+                ConfirmPassword = request.ConfirmPassword
+            });
+
+            if (!result.Success)
+                return BadRequest(new { success = false, message = result.Message });
+
+            return Ok(new { success = true, message = result.Message });
+        }
+
 
         // no auth required — public endpoint
         [HttpPost("login")]
@@ -253,5 +299,17 @@ namespace Job_portal.API.Controllers
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+    }
+
+    public class ForgotPasswordRequest
+    {
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class ResetPasswordRequest
+    {
+        public string Token { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

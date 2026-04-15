@@ -1,8 +1,4 @@
-﻿using Job_portal.Application.DTOs;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
 
 namespace Job_portal.Application.Features.Auth.Commands.Register
 {
@@ -21,8 +17,6 @@ namespace Job_portal.Application.Features.Auth.Commands.Register
     public record RegisterResult
     (
         bool Success,
-        string Message,
-        string? Token = null,
-        UserDto? User = null
+        string Message
     );
 }

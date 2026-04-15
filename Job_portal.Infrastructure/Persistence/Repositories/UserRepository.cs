@@ -3,8 +3,8 @@ using Job_portal.Domain.Entities;
 using Job_portal.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Job_portal.Infrastructure.Persistence.Repositories
-{
+namespace Job_portal.Infrastructure.Persistence.Repositories;
+
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
@@ -53,12 +53,29 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                 .Where(u => u.Role == UserRole.Recruiter)
                 .ToListAsync(ct);
         }
-        public async Task<User?> GetByEmailWithProfileAsync(string email , CancellationToken ct = default)
+        public async Task<User?> GetByEmailWithProfileAsync(string email, CancellationToken ct = default)
         {
             return await _context.Users
                 .Include(u => u.Profile)
-                .FirstOrDefaultAsync(u => u.Email == email,ct);
+                .FirstOrDefaultAsync(u => u.Email == email, ct);
         }
+        public async Task<User?> GetByConfirmationTokenAsync(string token, CancellationToken ct = default)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == token, ct);
+        }
+        public async Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email, ct);
+        }
+        public async Task<User?> GetByResetTokenAsync(string token, CancellationToken ct = default)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => 
+                                    u.PasswordResetToken == token && 
+                                    u.ResetTokenExpiresAt > DateTime.UtcNow, ct);
+        }
+
+
+
         public void Add(User user)
         {
             _context.Users.Add(user);
@@ -69,15 +86,12 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
             _context.Users.Remove(user);
         }
 
-        public async Task<bool> ExistsByEmailAsync(string email, CancellationToken ct = default)
-        {
-            return await _context.Users.AnyAsync(u => u.Email == email, ct);
 
-        }
 
         public async Task<int> SaveChangesAsync(CancellationToken ct = default)
         {
             return await _context.SaveChangesAsync(ct);
         }
-    }
-}
+
+    }  
+

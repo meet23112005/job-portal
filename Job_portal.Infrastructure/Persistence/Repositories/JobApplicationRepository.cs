@@ -42,6 +42,15 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(JA => JA.Id == id, ct);
         }
 
+        public async Task<JobApplication?> GetByIdWithApplicantAndJobAsync(Guid id, CancellationToken ct = default)
+        {
+            return await _context.Applications
+                .Include (JA => JA.Job)
+                    .ThenInclude (J => J!.Company)
+                .Include(JA => JA.Applicant)
+                .FirstOrDefaultAsync(JA => JA.Id == id, ct);
+        }
+
         public async Task<JobApplication?> GetByIdWithJobAsync(Guid id, CancellationToken ct = default)
         {
             return await _context.Applications

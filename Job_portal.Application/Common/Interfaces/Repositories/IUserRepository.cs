@@ -10,10 +10,14 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
         //used in → Login (email + password check)
 
         Task<User?> GetByEmailAsync(string email,CancellationToken ct = default);
+        
+        Task<User?> GetByResetTokenAsync(string token, CancellationToken ct = default);
+
         //UpdateProfile (needs profile to update bio/resume)
         Task<User?> GetByIdWithProfileAsync(Guid id, CancellationToken ct = default);
 
-
+        // used in ConfirmEmail — find user by token
+        Task<User?> GetByConfirmationTokenAsync(string token, CancellationToken ct = default);
 
         Task<IEnumerable<User?>> GetAllAsync(CancellationToken ct=default);
         Task<IEnumerable<User?>> GetAllRecruitersAsync(CancellationToken ct = default);

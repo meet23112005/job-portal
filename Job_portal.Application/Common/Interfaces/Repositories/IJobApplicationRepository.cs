@@ -1,7 +1,4 @@
 ﻿using Job_portal.Domain.Entities;
-using System.Net.NetworkInformation;
-using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Job_portal.Application.Common.Interfaces.Repositories
 {
@@ -22,6 +19,9 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
         // GET /api/v1/application/{id}/applicants — recruiter sees applicants with resume + profile
         Task<List<JobApplication>> GetByJobAsync(Guid jobId, CancellationToken ct = default);
 
+        // GET /api/v1/application/status/{id}/update
+        // needs Job + Company + Applicant all in one call
+        Task<JobApplication?> GetByIdWithApplicantAndJobAsync(Guid id, CancellationToken ct = default);
 
         Task<bool> AlreadyAppliedAsync(Guid jobId, Guid applicantId, CancellationToken ct = default);
 

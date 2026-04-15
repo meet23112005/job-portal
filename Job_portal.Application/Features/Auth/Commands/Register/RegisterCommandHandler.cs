@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Job_portal.Application.Common.Interfaces;
+﻿using Job_portal.Application.Common.Interfaces;
 using Job_portal.Application.Common.Interfaces.Repositories;
-using Job_portal.Application.DTOs;
 using Job_portal.Domain.Entities;
 using Job_portal.Domain.Enums;
 using MediatR;
@@ -11,16 +9,15 @@ namespace Job_portal.Application.Features.Auth.Commands.Register
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
     {
         private readonly IUserRepository _userRepo;
-        private readonly IMapper _mapper;
-        private readonly IFileService _fileService;
-        private readonly IJwtService _jwtService;
+        private readonly IEmailService _emailService;
 
-        public RegisterCommandHandler(IUserRepository userRepo, IMapper mapper, IFileService fileService, IJwtService jwtService)
+        private readonly IFileService _fileService;
+
+        public RegisterCommandHandler(IUserRepository userRepo, IEmailService emailService, IFileService fileService)
         {
             _userRepo = userRepo;
-            _mapper = mapper;
+            _emailService = emailService;
             _fileService = fileService;
-            _jwtService = jwtService;
         }
         public async Task<RegisterResult> Handle(RegisterCommand request, CancellationToken ct)
         {
@@ -45,7 +42,10 @@ namespace Job_portal.Application.Features.Auth.Commands.Register
                 PhoneNumber = request.PhoneNumber,
                 PasswordHash = passwordHash,
                 Role = userRole,
-                Profile = new UserProfile() // create empty profile
+                Profile = new UserProfile(), // create empty profile
+                IsEmailConfirmed = false,
+                EmailConfirmationToken = Guid.NewGuid().ToString("N") 
+
             };
 
             //Upload profile photo if provided
@@ -59,13 +59,16 @@ namespace Job_portal.Application.Features.Auth.Commands.Register
             _userRepo.Add(user);
             await _userRepo.SaveChangesAsync(ct);
 
-            //generate token
-            var token = _jwtService.GenerateToken(user);
+            //Send Email Confirmation
+            var confirmLink = $"https://localhost:44331/api/v1/user/confirm-email?token={user.EmailConfirmationToken}";
 
-            // Map to DTO and return
-            var userDto = _mapper.Map<UserDto>(user);
+            await _emailService.SendConfirmationEmailAsync(
+                                user.Email,
+                                user.FullName,
+                                confirmLink);
 
-            return new RegisterResult(true, "Regsitration Successful.", token, userDto);
+
+            return new RegisterResult(true, "Registration successful. Please check your email to confirm your account.");
         }
     }
 }

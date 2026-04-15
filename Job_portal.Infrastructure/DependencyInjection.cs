@@ -29,14 +29,19 @@ namespace Job_portal.Infrastructure
                 configuration.GetSection(AdminSettings.SectionName));
             services.Configure<CloudinarySettings>(
                 configuration.GetSection(CloudinarySettings.SectionName));
+            services.Configure<EmailSettings>(
+                configuration.GetSection(EmailSettings.SectionName));
 
 
             //services.AddScoped<IFileService, CloudinaryFileService>();//Cloudinary
-             services.AddScoped<IFileService, LocalFileService>(); //Local
+            services.AddScoped<IFileService, LocalFileService>(); //Local
 
             //Jwt service
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IJwtServiceAdmin, JwtService>();
+
+            //Email-Service
+            services.AddScoped<IEmailService, EmailService>();
 
             //repository
             services.AddScoped<IUserRepository, UserRepository>();
@@ -106,6 +111,7 @@ namespace Job_portal.Infrastructure
                 options.AddPolicy("StudentOrRecruiter", policy =>
                     policy.RequireRole("Student", "Recruiter"));
             });
+
             return services;
         }
     }

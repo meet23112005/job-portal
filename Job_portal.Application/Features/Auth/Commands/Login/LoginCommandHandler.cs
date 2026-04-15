@@ -28,6 +28,10 @@ namespace Job_portal.Application.Features.Auth.Commands.Login
             if(!isValid)
                 return new LoginResult(false, "Invalid Email or Password.");
 
+            //check email is confirmed?
+            if(!user.IsEmailConfirmed)
+                return new LoginResult(false, "Please confirm your email before logging in.");
+
             // Check if user is banned
             if (user.IsRemoved) 
                 return new LoginResult(false, "your account has been removed.");    
