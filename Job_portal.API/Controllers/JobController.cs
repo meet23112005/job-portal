@@ -61,8 +61,9 @@ public class JobController : ControllerBase
     [HttpGet("get/{jobId}")]
     public async Task<IActionResult> GetJobById(Guid jobId)
     {
+        var applicantId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await _mediator.Send(
-            new GetJobByIdQuery { JobId = jobId });
+            new GetJobByIdQuery { JobId = jobId, ApplicantId = applicantId });
 
         if (!result.Success)
             return NotFound(new { success = false, message = result.Message });

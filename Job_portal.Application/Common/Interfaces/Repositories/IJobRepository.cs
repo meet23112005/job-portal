@@ -14,7 +14,6 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
         // PUT,DELETE /api/v1/job/{id} — recruiter ownership check
         Task<Job?> GetByIdForRecruiterAsync(Guid id, Guid recruiterId, CancellationToken ct = default);
 
-
         // GET /api/v1/job/get?keyword= — student job listing
         Task<List<Job>> GetAllAsync(string? keyword, CancellationToken ct = default);
 

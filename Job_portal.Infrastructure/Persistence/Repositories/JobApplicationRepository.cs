@@ -51,6 +51,15 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(JA => JA.Id == id, ct);
         }
 
+        public async Task<bool> HasAppliedAsync(Guid jobId, Guid applicantId, CancellationToken ct = default)
+        {
+            return await _context.Applications
+                .AnyAsync(a =>
+                    a.JobId == jobId &&
+                    a.ApplicantId == applicantId,
+                    ct);
+        }
+
         public async Task<JobApplication?> GetByIdWithJobAsync(Guid id, CancellationToken ct = default)
         {
             return await _context.Applications

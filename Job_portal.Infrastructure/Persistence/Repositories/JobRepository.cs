@@ -34,9 +34,17 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                 .ToListAsync(ct);
         }
 
+        //public async Task<Job?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        //{
+        //    return await _context.Jobs.FindAsync(new object[] { id } , ct); //used in ApplyJob (just check job exists)
+        //}
+
         public async Task<Job?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
-            return await _context.Jobs.FindAsync(new object[] { id } , ct); //used in ApplyJob (just check job exists)
+            return await _context.Jobs
+                .Include(j => j.Company)
+                .Include(j => j.Applications)
+                .FirstOrDefaultAsync(j => j.Id == id && !j.IsRemoved, ct);
         }
 
         //ownership check — recruiter can only edit their own jobs
@@ -63,6 +71,7 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                         .OrderByDescending(J => J.CreatedAt)
                         .ToListAsync(ct);
         }
+
 
         public async Task<(List<Job> Jobs, int Total)> GetPaginatedAsync(JobFilter filter, int pageNumber, int pageSize, CancellationToken ct = default)
         {

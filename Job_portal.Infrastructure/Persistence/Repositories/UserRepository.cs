@@ -59,6 +59,7 @@ namespace Job_portal.Infrastructure.Persistence.Repositories;
                 .Include(u => u.Profile)
                 .FirstOrDefaultAsync(u => u.Email == email, ct);
         }
+
         public async Task<User?> GetByConfirmationTokenAsync(string token, CancellationToken ct = default)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == token, ct);

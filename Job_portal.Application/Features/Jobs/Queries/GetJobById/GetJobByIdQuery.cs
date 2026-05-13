@@ -8,6 +8,7 @@ namespace Job_portal.Application.Features.Jobs.Queries.GetJobById
     public record GetJobByIdQuery : IRequest<GetByJobIdResult>
     {
         public Guid JobId { get; init; }
+        public Guid ApplicantId { get; init; }
     }
     public record GetByJobIdResult(bool Success,string Message,JobDto? Job = null);
 }

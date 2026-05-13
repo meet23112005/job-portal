@@ -25,6 +25,8 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
 
         Task<bool> AlreadyAppliedAsync(Guid jobId, Guid applicantId, CancellationToken ct = default);
 
+        Task<bool> HasAppliedAsync(Guid jobId, Guid applicantId, CancellationToken ct = default);
+
         void Add(JobApplication application);
         Task<int> SaveChangesAsync(CancellationToken ct = default);
     }

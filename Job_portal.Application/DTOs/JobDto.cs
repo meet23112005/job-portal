@@ -14,5 +14,6 @@
         public int ApplicationCount { get; init; } 
         public CompanyDto? Company { get; init; }  
         public DateTime CreatedAt { get; init; }
+        public bool IsApplied { get; set; }
     }
 }
