@@ -16,7 +16,6 @@ namespace Job_portal.Infrastructure.Services
             _env = environment;
         }
 
-
         //Profile Photo and CompanyLogo
         //returns: relative URL → "/uploads/profiles/filename.jpg" 
         //frontend uses this URL to display image
