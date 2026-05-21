@@ -127,7 +127,7 @@ public class JobController : ControllerBase
     }
 
     // recruiter updates their job
-    [HttpPut("job/{id}")]
+    [HttpPut("edit/{id}")]
     [Authorize(Policy = "RecruiterOnly")]
     public async Task<IActionResult> UpdateJob(Guid id, [FromBody] UpdateJobRequest request)
     {
@@ -160,20 +160,21 @@ public class JobController : ControllerBase
     }
 
     // recruiter soft deletes — admin hard deletes
-    [HttpDelete("DeleteJob/{id}")]
-    [Authorize(Policy = "RecruiterOnly")]
+    [HttpDelete("deleteJob/{id}")]
+    [Authorize(Policy = "AdminOrRecruiter")]
     public async Task<IActionResult> DeleteJob(Guid id)
     {
-        var recruiterId = Guid.Parse(
-            User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
         var role = User.FindFirstValue(ClaimTypes.Role);
         var isAdmin = role?.ToLower() == "admin";
+
+        var recruiterId = isAdmin? Guid.NewGuid(): Guid.Parse(
+            User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
 
         var result = await _mediator.Send(new DeleteJobCommand
         {
             JobId = id,
-            RecruiterId = recruiterId,
+            RecruiterId = isAdmin?Guid.NewGuid():recruiterId,
             IsAdmin = isAdmin
         });
 

@@ -30,8 +30,14 @@ namespace Job_portal.Infrastructure.Services
                 _logger.LogWarning("Invalid file extension attempted: {Extension}", extension);
                 throw new BadRequestException("Only JPG PNG WEBP images allowed");
             }
+            var cleanFileName = Path.GetFileName(fileName);
 
-            var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+            cleanFileName = cleanFileName
+                                .Replace("#", "_")
+                                .Replace(" ", "_");
+
+
+            var uniqueFileName = $"{Guid.NewGuid()}_{cleanFileName}";
 
             var folderPath = Path.Combine(
                 _env.WebRootPath, "uploads", folder);
@@ -53,7 +59,12 @@ namespace Job_portal.Infrastructure.Services
 
         public async Task<string> UploadResumeAsync(Stream fileStream, string fileName, string originalName)
         {
-            var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+            var cleanFileName = Path.GetFileName(fileName);
+
+            cleanFileName = cleanFileName
+                                .Replace("#", "_")
+                                .Replace(" ", "_");
+            var uniqueFileName = $"{Guid.NewGuid()}_{cleanFileName}";
             var folderPath = Path.Combine(_env.WebRootPath, "uploads", "resumes");
             if (!Directory.Exists(folderPath))
             {

@@ -121,12 +121,14 @@ public class CompanyController : ControllerBase
 
     // recruiter soft deletes their company
     [HttpPut("deleteCompany/{id}")]
-    [Authorize(Policy = "RecruiterOnly")]
+    [Authorize(Policy = "AdminOrRecruiter")]
     public async Task<IActionResult> SoftDeleteCompany(Guid id)
     {
-        var recruiterId = Guid.Parse(
+        var role = User.FindFirstValue(ClaimTypes.Role);
+        var isAdmin = role?.ToLower() == "admin";
+        var recruiterId = isAdmin ? Guid.NewGuid() :Guid.Parse(
             User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _mediator.Send(new SoftDeleteCompanyCommand { RecruiterId = recruiterId,CompanyId = id });
+        var result = await _mediator.Send(new SoftDeleteCompanyCommand { RecruiterId = recruiterId,CompanyId = id, isAdmin = isAdmin });
 
         if(!result.Success) 
             return BadRequest(new { success = false, message = result.Message});

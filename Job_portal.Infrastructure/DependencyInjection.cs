@@ -5,6 +5,7 @@ using Job_portal.Infrastructure.Persistence;
 using Job_portal.Infrastructure.Persistence.Repositories;
 using Job_portal.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -92,6 +93,16 @@ namespace Job_portal.Infrastructure
                             if (!string.IsNullOrEmpty(token))
                                 context.Token = token;
                             return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            // Skip the default logic.
+                            context.HandleResponse();
+                            // Return 401 with custom message
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+                            var result = System.Text.Json.JsonSerializer.Serialize(new { error = "Unauthorized" });
+                            return context.Response.WriteAsync(result);
                         }
                     };
                 });
@@ -110,6 +121,9 @@ namespace Job_portal.Infrastructure
 
                 options.AddPolicy("StudentOrRecruiter", policy =>
                     policy.RequireRole("Student", "Recruiter"));
+
+                options.AddPolicy("AdminOrRecruiter", policy =>
+                    policy.RequireRole("Admin", "Recruiter"));
             });
 
             return services;

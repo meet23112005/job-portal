@@ -1,5 +1,6 @@
 ﻿using Job_portal.Application.Features.Admin.Commands.AdminLogin;
 using Job_portal.Application.Features.Admin.Queries.GetAllAdminCompanies;
+using Job_portal.Application.Features.Admin.Queries.GetAllJobs;
 using Job_portal.Application.Features.Admin.Queries.GetJobWithapplicants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -77,6 +78,19 @@ public class AdminController : ControllerBase
             success = result.Success,
             message = result.Message,
             companies = result.Companies
+        });
+    }
+
+    [HttpGet("getAllJobs")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> GetAllAdminJobs()
+    {
+        var result = await _mediator.Send(new GetAllAdminJobsQuery{ });
+        return Ok(new
+        {
+            success = result.Success,
+            message = result.Message,
+            jobs = result.Jobs
         });
     }
 }

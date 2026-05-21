@@ -8,6 +8,9 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
         // GET /api/v1/job/get/{id} — ApplyJob existence check
         Task<Job?> GetByIdAsync(Guid id, CancellationToken ct = default);
 
+        //get job for admin where is it removed or not
+        Task<Job?> GetByIdForAdminAsync(Guid id, CancellationToken ct = default);
+
         // GET /api/v1/job/get/{id} — student job detail page
         Task<Job?> GetByIdWithCompanyAsync(Guid id, CancellationToken ct = default);
 
@@ -16,6 +19,9 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
 
         // GET /api/v1/job/get?keyword= — student job listing
         Task<List<Job>> GetAllAsync(string? keyword, CancellationToken ct = default);
+
+        //Admin can see all jobs whether removed or not, but can filter by keyword
+        Task<List<Job>> GetAllForAdminAsync(CancellationToken ct = default);
 
         // GET /api/v1/job/getadminjobs — recruiter's own jobs
         Task<List<Job>> GetByRecruiterAsync(Guid recruiterId, CancellationToken ct = default);

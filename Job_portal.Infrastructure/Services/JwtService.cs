@@ -42,7 +42,7 @@ namespace Job_portal.Infrastructure.Services
             var claims = new[]
             {
                new Claim (JwtRegisteredClaimNames.Email , email),
-               new Claim(ClaimTypes .Role , "Admin"),
+               new Claim(ClaimTypes.Role , "Admin"),
                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
            };
             return BuildToken(claims);

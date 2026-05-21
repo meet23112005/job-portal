@@ -95,7 +95,7 @@ namespace Job_portal.Infrastructure.Persistence
                 .HasOne(s => s.Job)
                 .WithMany(j => j.SavedJobs)
                 .HasForeignKey(s => s.JobId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

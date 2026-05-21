@@ -22,14 +22,15 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
 
         public async Task<Company?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
-            return await _context.Companies.FirstOrDefaultAsync(c => c.Id == id,ct);
+            return await _context.Companies
+                .Include(C=> C.Jobs)
+                .FirstOrDefaultAsync(c => c.Id == id,ct);
         }
 
         public async Task<Company?> GetByIdForRecruiterAsync(Guid id, Guid recruiterId, CancellationToken ct = default)
         {
             return await _context.Companies
-                .FirstOrDefaultAsync(C => C.CreatedBy == recruiterId && C.Id == id, ct);
-                
+                .FirstOrDefaultAsync(C => C.CreatedBy == recruiterId && C.Id == id, ct);   
         }
 
         //recruiter sees ONLY their own companies

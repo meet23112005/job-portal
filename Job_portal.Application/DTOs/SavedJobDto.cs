@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Job_portal.Application.DTOs
+﻿namespace Job_portal.Application.DTOs
 {
     public record SavedJobDto
     {

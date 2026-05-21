@@ -33,6 +33,15 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                 .OrderByDescending(J => J.CreatedAt)
                 .ToListAsync(ct);
         }
+        public async Task<List<Job>> GetAllForAdminAsync(CancellationToken ct = default)
+        {
+            return await _context.Jobs
+                                .Include(J => J.Company)
+                                .Include(J => J.Applications)
+                                .ToListAsync(ct);
+
+            
+        }
 
         //public async Task<Job?> GetByIdAsync(Guid id, CancellationToken ct = default)
         //{
@@ -45,6 +54,14 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                 .Include(j => j.Company)
                 .Include(j => j.Applications)
                 .FirstOrDefaultAsync(j => j.Id == id && !j.IsRemoved, ct);
+        }
+
+        public async Task<Job?> GetByIdForAdminAsync(Guid id, CancellationToken ct = default)
+        {
+            return await _context.Jobs
+                .Include(j => j.Company)
+                .Include(j => j.Applications)
+                .FirstOrDefaultAsync(j => j.Id == id , ct);
         }
 
         //ownership check — recruiter can only edit their own jobs
@@ -78,7 +95,7 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
             var query = _context.Jobs
                 .Include(J => J.Company)
                 .Include(J => J.Applications)
-                .Where(J => !J.IsRemoved)
+                .Where(J => J.IsRemoved == false)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))

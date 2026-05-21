@@ -18,6 +18,10 @@ namespace Job_portal.Application.Features.Jobs.Commands.DeleteJob
         public async Task<DeleteJobResult> Handle(DeleteJobCommand request, CancellationToken ct)
         {
             var job = await _jobRepository.GetByIdForRecruiterAsync(request.JobId, request.RecruiterId, ct);
+            if (request.IsAdmin)
+            {
+                job = await _jobRepository.GetByIdForAdminAsync(request.JobId, ct);
+            }
             if (job == null)
                 return new DeleteJobResult(false, "Job Not Found.");
 

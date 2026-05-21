@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Job_portal.Domain.Entities
+﻿namespace Job_portal.Domain.Entities
 {
     public class SavedJob:BaseEntity
     {
