@@ -69,6 +69,7 @@ namespace Job_portal.Infrastructure.Services
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
+
             }
             var filePath = Path.Combine(folderPath, uniqueFileName);
 
