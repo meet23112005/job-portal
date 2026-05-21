@@ -14,8 +14,8 @@ namespace Job_portal.Infrastructure.Services
         {
             _logger = logger;
             _env = environment;
-        }
 
+        }
 
         //Profile Photo and CompanyLogo
         //returns: relative URL → "/uploads/profiles/filename.jpg" 
