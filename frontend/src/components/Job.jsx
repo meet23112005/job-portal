@@ -8,6 +8,7 @@ import axios from 'axios';
 import { toast } from 'sonner';                          // ✅ sonner not react-toastify
 import { useSelector } from 'react-redux';
 import { JOB_API_END_POINT } from '@/utils/constant';   // ✅ use constant
+import { API_BASE_URL } from '@/utils/constant';     // ✅ use constant
 
 const Job = ({ job }) => {
     const navigate = useNavigate();
@@ -29,6 +30,8 @@ const Job = ({ job }) => {
         };
         fetchSaveStatus();
     }, [job?.id, user]);
+
+   
 
     const handleSaveJob = async () => {
         if (!user) { navigate("/login"); return; }      // ✅ Redux check
@@ -74,6 +77,9 @@ const Job = ({ job }) => {
         return diffYears === 1 ? "1 year ago" : `${diffYears} years ago`;
     };
 
+    var logo = job?.company?.logo ?? "";
+    logo = logo.includes("cloudinary") ? logo : `${API_BASE_URL}/${logo}`;  // ✅ handle relative URL
+
     return (
         <div className='p-5 rounded-md shadow-xl bg-white border border-gray-100 w-full max-w-md mx-auto md:max-w-lg lg:max-w-xl h-[350px] flex flex-col justify-between'>
             <div className='flex items-center justify-between'>
@@ -88,7 +94,7 @@ const Job = ({ job }) => {
             <div className='flex items-center gap-3 my-2 flex-wrap'>
 
                 <Avatar className="w-10 h-10">
-                    <AvatarImage src={job?.company?.logo} />
+                    <AvatarImage src={logo} />
                 </Avatar>
                 <div>
                     <h1 className='font-medium text-lg'>{job?.company?.name}</h1>
