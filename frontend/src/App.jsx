@@ -24,11 +24,16 @@ import ResetPassword from './components/auth/ResetPassword'
 import axios from 'axios'
 import store from './redux/store'
 import { logout } from './redux/authSlice'
+import RootRedirect from './components/RootRedirect'
 
-const appRouter = createBrowserRouter([
+const appRouter = createBrowserRouter([  
   {
-    path: '/',
-    element: <Home />
+    path: "/",
+    element: <RootRedirect />  // ← smart redirect based on role ✅
+  },
+  {
+    path: '/home',
+    element:<Home />
   },
   {
     path: '/login',
@@ -60,58 +65,58 @@ const appRouter = createBrowserRouter([
   },
   // admin routes start from here
   {
-    path:"/recruiter/companies",
-    element: <ProtectedRoute><Companies/></ProtectedRoute>
+    path: "/recruiter/companies",
+    element: <ProtectedRoute><Companies /></ProtectedRoute>
   },
   {
-    path:"/recruiter/companies/create",
-    element: <ProtectedRoute><CompanyCreate/></ProtectedRoute> 
+    path: "/recruiter/companies/create",
+    element: <ProtectedRoute><CompanyCreate /></ProtectedRoute>
   },
   {
-    path:"/recruiter/companies/:id",
-    element:<ProtectedRoute><CompanySetup/></ProtectedRoute> 
+    path: "/recruiter/companies/:id",
+    element: <ProtectedRoute><CompanySetup /></ProtectedRoute>
   },
   {
-    path:"/recruiter/jobs",
-    element:<ProtectedRoute><AdminJobs/></ProtectedRoute> 
+    path: "/recruiter/jobs",
+    element: <ProtectedRoute><AdminJobs /></ProtectedRoute>
   },
   {
-    path:"/recruiter/jobs/create",
-    element:<ProtectedRoute><PostJob/></ProtectedRoute> 
+    path: "/recruiter/jobs/create",
+    element: <ProtectedRoute><PostJob /></ProtectedRoute>
   },
   {
-    path:"/recruiter/jobs/edit/:id",
-    element:<ProtectedRoute><EditJob/></ProtectedRoute> 
+    path: "/recruiter/jobs/edit/:id",
+    element: <ProtectedRoute><EditJob /></ProtectedRoute>
   },
   {
-    path:"/recruiter/jobs/:id/applicants",
-    element:<ProtectedRoute><Applicants/></ProtectedRoute> 
+    path: "/recruiter/jobs/:id/applicants",
+    element: <ProtectedRoute><Applicants /></ProtectedRoute>
   },
   {
-    path:"/admin/login",
-    element:<AdminLogin/> 
+    path: "/admin/login",
+    element: <AdminLogin />
   },
   {
-    path:"/admin/dashboard",
-    element:<AdminProtectedRoute><Dashboard /></AdminProtectedRoute>
+    path: "/admin/dashboard",
+    element: <AdminProtectedRoute><Dashboard /></AdminProtectedRoute>
   },
- {
+  {
     path: "/email-confirmation-pending",
     element: <EmailConfirmationPending />
-},
-{
+  },
+  {
     path: "/confirm-email-failed",
     element: <ConfirmEmailFailed />
-},
-// Router file
-{
+  },
+  // Router file
+  {
     path: "/forgot-password",
     element: <ForgotPassword />
-},
-{
+  },
+  {
     path: "/reset-password",
     element: <ResetPassword />
-},
+  },
 
 ])
 
@@ -119,21 +124,21 @@ axios.defaults.withCredentials = true
 
 // Add request interceptor
 axios.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
 //Response Interceptor — handle 401
 axios.interceptors.response.use(
   (response) => response,
-  (error) =>{
-    if(error?.response?.status === 401){
+  (error) => {
+    if (error?.response?.status === 401) {
       //token invalid or expired
 
       //clear redux state and remove token and user from localstorage in logout reducer

@@ -15,13 +15,17 @@ const AdminProtectedRoute = ({ children }) => {
         if (!user && storedAdmin) {
             dispatch(setUser(JSON.parse(storedAdmin))); 
         }
-
+        
         // Redirect if no admin user is found
         if (!storedAdmin) {
             navigate("/admin/login");
         }
+        if (user.role !== "admin") {
+            navigate("/");  // ← non-admin goes to home
+        }
     }, [dispatch, navigate, user]); // Only update when these dependencies change
 
+    //admin can access children, others get null
     return user?.role === "admin" ? children : null;
 };
 

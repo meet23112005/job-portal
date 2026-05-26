@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { setUser } from "../../redux/authSlice";
 import axios from "axios";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const AdminLogin = () => {
   const dispatch = useDispatch();
@@ -129,7 +130,11 @@ const AdminLogin = () => {
                     >
                         {loading ? "Logging in..." : "Login"}
                     </button>
+                    <Link to="/login" className="text-sm text-blue-600 hover:underline mt-4 block text-center">
+                    Login as user? Click here
+                </Link>
                 </form>
+                
             </div>
         </div>
   );
