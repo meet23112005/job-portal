@@ -11,9 +11,7 @@ const ProtectedRoute = ({children}) => {
         if(user === null || user.role !== 'recruiter' || user.isRemove === true){
             navigate("/");
         }
-        if(user && user.role !== 'admin'){
-            navigate("/");
-        }
+       
         if(user && user.role === 'admin'){
             navigate("/admin/dashboard");
         }
