@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { RadioGroup } from "../ui/radio-group";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -139,6 +138,7 @@ const Login = () => {
             </Button>
           )}
           <span className="text-sm">
+            {/*eslint-disable-next-line react/no-unescaped-entities*/} 
             Don't have an account?{" "}
             <Link to="/signup" className="text-blue-600">
               Signup

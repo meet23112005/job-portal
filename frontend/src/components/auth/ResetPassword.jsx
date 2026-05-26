@@ -10,9 +10,9 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import Navbar from "../shared/Navbar";
 
 const ResetPassword = () => {
-    const [searchParams]              = useSearchParams();
-    const token                       = searchParams.get("token");
-    const navigate                    = useNavigate();
+    const [searchParams]  = useSearchParams();
+    const token = searchParams.get("token");
+    const navigate = useNavigate();
 
     const [newPassword,     setNewPassword]     = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");

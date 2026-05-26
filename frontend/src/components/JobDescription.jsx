@@ -137,7 +137,7 @@ const JobDescription = () => {
       }
     } catch (error) {
       if(error.response.data.isRemoved === true)
-          toast.error("This Job Is no longetr avilable to apply");
+          toast.error("This Job Is no longer avilable to apply");
       toast.error(error?.response?.data?.message || 'Failed to apply. Please try again later.');
     }
   };

@@ -266,7 +266,7 @@ namespace Job_portal.API.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,//set true in production
+                Secure = false,//set true in production
                 SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddDays(1)
             };
