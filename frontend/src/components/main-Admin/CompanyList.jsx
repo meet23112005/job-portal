@@ -1,10 +1,11 @@
-import { Trash } from "lucide-react";
+import { Trash,ArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const CompanyList = () => {
     const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
 
     // Fetch companies function
     const fetchCompanies = async () => {
@@ -34,6 +35,14 @@ const CompanyList = () => {
     useEffect(() => {
         fetchCompanies();
     }, []);
+
+    const handleSort = (key) => {
+        let direction = "asc";
+        if(sortConfig.direction === "asc" && sortConfig.key === key){
+            direction = "desc";
+        }
+        setSortConfig({key,direction});
+    }
 
     // Handle delete action
     const handleDelete = async (id) => {
@@ -66,6 +75,34 @@ const CompanyList = () => {
         }
     };
 
+   const sortedCompanies = [...companies].sort((a, b) => {
+    const { key, direction } = sortConfig;
+
+    let avalue = a[key] ?? "N/A";
+    let bvalue = b[key] ?? "N/A";
+
+    const aEmpty = avalue === "N/A";
+    const bEmpty = bvalue === "N/A";
+
+    if (aEmpty && !bEmpty) return 1;
+    if (!aEmpty && bEmpty) return -1;
+    if (aEmpty && bEmpty) return 0;
+
+    if (typeof avalue === "string") {
+        avalue = avalue.toLowerCase();
+        bvalue = bvalue.toLowerCase();
+    }
+
+    if (avalue < bvalue) {
+        return direction === "asc" ? -1 : 1;
+    }
+
+    if (avalue > bvalue) {
+        return direction === "asc" ? 1 : -1;
+    }
+
+    return 0;
+});
     return (
         <div className="p-6 bg-white shadow-lg rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Company List</h2>
@@ -78,21 +115,38 @@ const CompanyList = () => {
                 <table className="min-w-full border border-gray-300">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 border">Company Name</th>
-                            <th className="p-2 border">Location</th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("name")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Company Name
+                                    <ArrowUpDown size={16} />
+                                </div>
+                                
+                            </th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("location")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Location
+                                    <ArrowUpDown size={16} />
+                                </div>
+                            </th>
                             <th className="p-2 border">Website</th>
                             <th className="p-2 border">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {companies.map((company) => (
+                        {sortedCompanies.map((company) => (
                             <tr key={company.id} className="border">
 
                                 <td className="p-2 border">{company.name}</td>
                                 <td className="p-2 border">{company.location || "N/A"}</td>
                                 <td className="p-2 border">
                                     {company.website ? (
-                                        <a href={company.website} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                                        <a href={"https://"+company.website} target="_blank" rel="noopener noreferrer" className="text-blue-500">
                                             Visit Website
                                         </a>
                                     ) : (

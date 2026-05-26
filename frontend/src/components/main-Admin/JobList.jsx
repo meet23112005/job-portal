@@ -1,9 +1,10 @@
-import { Trash } from "lucide-react";
+import { Trash, ArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const JobList = () => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
 
     // Fetch jobs from API
     const fetchJobs = async () => {
@@ -24,7 +25,7 @@ const JobList = () => {
             }
         } catch (error) {
             console.error("Error fetching jobs:", error);
-            setJobs([]);            
+            setJobs([]);
         } finally {
             setLoading(false);
         }
@@ -32,11 +33,20 @@ const JobList = () => {
 
     useEffect(() => {
         fetchJobs();
-        
+
         window.addEventListener("focus", fetchJobs);
-        
+
         return () => window.removeEventListener("focus", fetchJobs);
     }, []);
+
+    const handleSort = (key) => {
+        let direction = "asc";
+        if (sortConfig.key === key && sortConfig.direction === "asc") {
+            direction = "desc";
+        }
+        setSortConfig({ key, direction });
+    }
+    
 
     // Handle delete action
     const handleDelete = async (id) => {
@@ -65,6 +75,31 @@ const JobList = () => {
         }
     };
 
+    const sortedJobs = [...jobs].sort((a, b) => {
+        const { key, direction } = sortConfig;
+
+        let avalue = a[key];
+        let bvalue = b[key];
+
+        if (key === "company") {
+            avalue = a.company?.name || "";
+            bvalue = b.company?.name || "";
+        }
+
+        if (key === "createdAt") {
+            avalue = new Date(a.createdAt);
+            bvalue = new Date(b.createdAt);
+        }
+
+        if (avalue < bvalue) {
+            return direction === "asc" ? -1 : 1;
+        }
+        if (avalue > bvalue) {
+            return direction === "asc" ? 1 : -1;
+        }
+
+        return 0;
+    });
     return (
         <div className="p-6 bg-white shadow-lg rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Job List</h2>
@@ -77,17 +112,57 @@ const JobList = () => {
                 <table className="min-w-full border border-gray-300">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="p-2 border">Title</th>
-                            <th className="p-2 border">Company</th>
-                            <th className="p-2 border">Location</th>
-                            <th className="p-2 border">Salary</th>
-                            <th className="p-2 border">Posted On</th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("title")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Title
+                                    <ArrowUpDown size={16} />
+                                </div>
+                            </th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("company")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Company
+                                    <ArrowUpDown size={16} />
+                                </div>
+                            </th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("location")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Location
+                                    <ArrowUpDown size={16} />
+                                </div>
+                            </th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("salary")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Salary
+                                    <ArrowUpDown size={16} />
+                                </div>
+                            </th>
+                            <th
+                                className="p-2 border cursor-pointer"
+                                onClick={() => handleSort("createdAt")}
+                            >
+                                <div className="flex items-center justify-center gap-1">
+                                    Posted On
+                                    <ArrowUpDown size={16} />
+                                </div>
+                            </th>
                             <th className="p-2 border">IsActive</th>
                             <th className="p-2 border">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {jobs.map((job) => (
+                        {sortedJobs.map((job) => (
                             <tr key={job.id} className="border">
                                 <td className="p-2 border">{job.title}</td>
                                 <td className="p-2 border">{job.company?.name || "N/A"}</td>
