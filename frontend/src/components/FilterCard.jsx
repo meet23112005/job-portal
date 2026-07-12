@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
-import { useDispatch } from 'react-redux'
-import { setSearchedQuery } from '@/redux/jobSlice'
+import { Button } from './ui/button'
+import { useDispatch, useSelector } from 'react-redux'
+import { setFilters, setFilterKeyword, setFilterLocation, setCurrentPage } from '@/redux/jobSlice'
 
 const fitlerData = [
     {
@@ -16,20 +16,42 @@ const fitlerData = [
 ]
 
 const FilterCard = () => {
-    const [selectedValue, setSelectedValue] = useState('');
     const dispatch = useDispatch();
-    
+    const { filters } = useSelector(store => store.job);
+    const selectedValue = filters.location || filters.keyword || '';
+
     const changeHandler = (value) => {
-        setSelectedValue(value);
+        const selectedFilterType = fitlerData.find((group) => group.array.includes(value))?.fitlerType;
+        console.log('Filter selection:', selectedFilterType, value);
+
+        if (selectedFilterType === 'Location') {
+            dispatch(setFilterLocation(value));
+        } else if (selectedFilterType === 'Industry') {
+            dispatch(setFilterKeyword(value));
+        }
+
+        // Ensure we reset to page 1 so useGetAllJobs hook triggers the fetch
+        dispatch(setCurrentPage(1));
     }
-    
-    useEffect(() => {
-        dispatch(setSearchedQuery(selectedValue));
-    }, [selectedValue]);
+
+    const clearFilters = () => {
+        dispatch(setFilters({ keyword: '', location: '' }));
+    }
 
     return (
         <div className='w-full bg-white p-3 rounded-md'>
-            <h1 className='font-bold text-lg'>Filter Jobs</h1>
+            <div className='flex items-center justify-between gap-3'>
+                <h1 className='font-bold text-lg'>Filter Jobs</h1>
+                <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    onClick={clearFilters}
+                    disabled={!selectedValue}
+                >
+                    Clear
+                </Button>
+            </div>
             <hr className='mt-3' />
             <RadioGroup value={selectedValue} onValueChange={changeHandler}>
                 {
@@ -42,7 +64,11 @@ const FilterCard = () => {
                                     const itemId = `id${index}-${idx}`
                                     return (
                                         // 2. Added unique key here using itemId
-                                        <div key={itemId} className='flex items-center space-x-2 my-2'>
+                                        <div
+                                            key={itemId}
+                                            className='flex items-center space-x-2 my-2 cursor-pointer'
+                                            onClick={() => changeHandler(item)}
+                                        >
                                             <RadioGroupItem value={item} id={itemId} />
                                             <Label htmlFor={itemId}>{item}</Label>
                                         </div>
