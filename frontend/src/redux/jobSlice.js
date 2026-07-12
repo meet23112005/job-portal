@@ -9,6 +9,10 @@ const jobSlice = createSlice({
         searchJobByText:"",
         allAppliedJobs:[],
         searchedQuery:"",
+        filters: {
+            keyword: "",
+            location: ""
+        },
 
         currentPage : 1,
         totalJobs: 0,
@@ -35,8 +39,21 @@ const jobSlice = createSlice({
         setSearchedQuery:(state,action) => {
             state.searchedQuery = action.payload;
         },
+        setFilters:(state,action) => {
+            state.filters = {
+                ...state.filters,
+                ...action.payload
+            };
+        },
+        setFilterKeyword:(state, action) => {
+            state.filters.keyword = action.payload;
+            state.filters.location = '';
+        },
+        setFilterLocation:(state, action) => {
+            state.filters.location = action.payload;
+            state.filters.keyword = '';
+        },
         setPagination:(state,action) => {
-            console.log("current page "+action.payload.currentPage);
             state.currentPage = action.payload.currentPage;
             state.totalJobs = action.payload.totalJobs;
             state.totalPages = action.payload.totalPages;
@@ -53,6 +70,9 @@ export const {
     setSearchJobByText, 
     setAllAppliedJobs,
     setSearchedQuery,
+    setFilters,
+    setFilterKeyword,
+    setFilterLocation,
     setPagination,
     setCurrentPage
 } = jobSlice.actions;

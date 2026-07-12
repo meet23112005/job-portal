@@ -1,46 +1,37 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { motion } from 'framer-motion';
-import Navbar from './shared/Navbar';
-import FilterCard from './FilterCard';
-import Job from './Job';
-import Pagination from './shared/Pagination';
-import { setCurrentPage } from '@/redux/jobSlice';
-import useGetAllJobs from '@/hooks/useGetAllJobs';
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { setCurrentPage } from '@/redux/jobSlice'
+import Navbar from './shared/Navbar'
+import FilterCard from './FilterCard'
+import Job from './Job'
+import Pagination from './shared/Pagination'
+import { motion } from 'framer-motion'
+import useGetAllJobs from '@/hooks/useGetAllJobs'
 
 const Jobs = () => {
-    useGetAllJobs();
+    useGetAllJobs()
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
     const {
         allJobs,
-        searchedQuery,
+        filters,
         currentPage,
         totalPages,
         totalJobs,
-        pageSize
-    } = useSelector(store => store.job);
-
-    const [filterJobs, setFilterJobs] = useState(allJobs);
+        pageSize,
+        searchedQuery
+    } = useSelector(store => store.job)
 
     useEffect(() => {
-        if (searchedQuery) {
-            const filteredJobs = allJobs.filter((job) => {
-                return (
-                    job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job.location.toLowerCase().includes(searchedQuery.toLowerCase())
-                );
-            });
-            setFilterJobs(filteredJobs);
-        } else {
-            setFilterJobs(allJobs);
+        if (searchedQuery && currentPage !== 1) {
+            dispatch(setCurrentPage(1))
         }
-    }, [allJobs, searchedQuery]);
+    }, [searchedQuery, currentPage, dispatch])
 
     // HANDLE PAGE CHANGE
     const handlePageChange = (page) => {
         dispatch(setCurrentPage(page));
+
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -50,11 +41,9 @@ const Jobs = () => {
     return (
         <div>
             <Navbar />
-
             <div className='max-w-7xl mx-auto mt-5'>
                 <div className='flex gap-5'>
-                    {/* FILTER SIDEBAR */}
-                    <div className='w-[20%]'>
+                    <div className='w-20%'>
                         <FilterCard />
                     </div>
 
@@ -79,9 +68,10 @@ const Jobs = () => {
                                 {" "}jobs
                             </p>
                         </div>
+                  
 
                         {/* JOBS DISPLAY CONTAINER */}
-                        {filterJobs.length <= 0 ? (
+                        {allJobs.length <= 0 ? (
                             <div className='text-center py-10'>
                                 <span className='text-gray-500 text-lg'>
                                     Job not found
@@ -91,7 +81,7 @@ const Jobs = () => {
                             <>
                                 {/* JOB GRID */}
                                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4'>
-                                    {filterJobs
+                                    {allJobs
                                         .filter(job => !job.isRemoved)
                                         .map((job) => (
                                             <motion.div
@@ -103,11 +93,9 @@ const Jobs = () => {
                                             >
                                                 <Job job={job} />
                                             </motion.div>
-                                        ))
-                                    }
+                                        ))}
                                 </div>
 
-                                {/* PAGINATION */}
                                 <Pagination
                                     currentPage={currentPage}
                                     totalPages={totalPages}
@@ -117,6 +105,8 @@ const Jobs = () => {
                         )}
                     </div>
                 </div>
+
+
             </div>
         </div>
     );
