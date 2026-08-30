@@ -37,6 +37,7 @@ namespace Job_portal.Application.Common.Mappings
                 ForMember(d => d.Status,
                     o => o.MapFrom(s => s.Status.ToString().ToLower()));
 
+
             #region Job With Applicants
             CreateMap<Job, JobWithApplicantsDto>();
 
