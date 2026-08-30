@@ -8,7 +8,7 @@
         public string? Website { get; init; }             
         public string? Location { get; init; }            
         public string? Logo { get; init; }                
-        public bool IsRemove { get; init; }               
+      //  public bool IsRemove { get; init; }  //removed as not required in frontend             
         public DateTime CreatedAt { get; init; }          
 
     }
