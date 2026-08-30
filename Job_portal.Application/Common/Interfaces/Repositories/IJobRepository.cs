@@ -35,3 +35,4 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
         Task<int> SaveChangesAsync(CancellationToken ct = default);
     }
 }
+
