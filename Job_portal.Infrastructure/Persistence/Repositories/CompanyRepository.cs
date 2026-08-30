@@ -1,4 +1,5 @@
 ﻿using Job_portal.Application.Common.Interfaces.Repositories;
+using Job_portal.Application.DTOs;
 using Job_portal.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,11 +35,20 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
         }
 
         //recruiter sees ONLY their own companies
-        public async Task<IEnumerable<Company>> GetByRecruiterAsync(Guid recruiterId, CancellationToken ct = default)
+        public async Task<IEnumerable<CompanyDto>> GetByRecruiterAsync(Guid recruiterId, CancellationToken ct = default)
         {
             return await _context.Companies
                 .Where(C => C.CreatedBy == recruiterId && !C.IsRemoved) //!c.IsRemoved filters out soft deleted Companies
-                .ToListAsync(ct);
+                .Select(c => new CompanyDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    Website = c.WebSite,
+                    Location = c.Location,
+                    Logo = c.Logo,
+                    CreatedAt = c.CreatedAt
+                } ).ToListAsync(ct);
         }
         public async Task<bool> ExistsByNameForRecruiterAsync(string name, Guid recruiterId, CancellationToken ct = default)
         {

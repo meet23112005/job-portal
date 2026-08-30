@@ -25,9 +25,7 @@ namespace Job_portal.Application.Common.Mappings
             #endregion
 
             //Company
-            CreateMap<Company, CompanyDto>()
-                .ForMember(d => d.IsRemove,
-                    o => o.MapFrom(s => s.IsRemoved));
+            CreateMap<Company, CompanyDto>();
 
             //Job
             CreateMap<Job, JobDto>()

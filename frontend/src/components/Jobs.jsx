@@ -1,28 +1,42 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { setCurrentPage } from '@/redux/jobSlice'
 import Navbar from './shared/Navbar'
 import FilterCard from './FilterCard'
-import Job from './Job';
-import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-
-// const jobsArray = [1, 2, 3, 4, 5, 6, 7, 8];
+import Job from './Job'
+import Pagination from './shared/Pagination'
+import { motion } from 'framer-motion'
+import useGetAllJobs from '@/hooks/useGetAllJobs'
 
 const Jobs = () => {
-    const { allJobs, searchedQuery } = useSelector(store => store.job);
-    const [filterJobs, setFilterJobs] = useState(allJobs);
+    useGetAllJobs()
+
+    const dispatch = useDispatch()
+    const {
+        allJobs,
+        filters,
+        currentPage,
+        totalPages,
+        totalJobs,
+        pageSize,
+        searchedQuery
+    } = useSelector(store => store.job)
 
     useEffect(() => {
-        if (searchedQuery) {
-            const filteredJobs = allJobs.filter((job) => {
-                return job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job.location.toLowerCase().includes(searchedQuery.toLowerCase())
-            })
-            setFilterJobs(filteredJobs)
-        } else {
-            setFilterJobs(allJobs)
+        if (searchedQuery && currentPage !== 1) {
+            dispatch(setCurrentPage(1))
         }
-    }, [allJobs, searchedQuery]);
+    }, [searchedQuery, currentPage, dispatch])
+
+    // HANDLE PAGE CHANGE
+    const handlePageChange = (page) => {
+        dispatch(setCurrentPage(page));
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
 
     return (
         <div>
@@ -32,33 +46,70 @@ const Jobs = () => {
                     <div className='w-20%'>
                         <FilterCard />
                     </div>
-                    {
-                        filterJobs.length <= 0 ? <span>Job not found</span> : (
-                            <div className='flex-1 overflow-y-auto pb-5' style={{ height: 'calc(100vh - 100px)' }}>
-                                <div className='grid grid-cols-3 gap-4 p-4'>
-                                    {
-                                        filterJobs
-                                        .filter(job => !job.isRemoved).map((job) => (
-                                            <motion.div 
-                                                initial={{ opacity: 0, x:100 }}
+
+                    {/* MAIN CONTENT AREA */}
+                    <div
+                        className='flex-1 overflow-y-auto pb-5'
+                        style={{ height: 'calc(100vh - 100px)' }}
+                    >
+                        {/* JOB COUNT */}
+                        <div className='flex justify-between items-center px-4 mb-4'>
+                            <p className='text-sm text-gray-500'>
+                                Showing{" "}
+                                <span className='font-semibold text-gray-800'>
+                                    {((currentPage - 1) * pageSize) + 1}
+                                    {" - "}
+                                    {currentPage * pageSize > totalJobs ? totalJobs : currentPage * pageSize}
+                                </span>
+                                {" "}of{" "}
+                                <span className='font-semibold text-gray-800'>
+                                    {totalJobs}
+                                </span>
+                                {" "}jobs
+                            </p>
+                        </div>
+                  
+
+                        {/* JOBS DISPLAY CONTAINER */}
+                        {allJobs.length <= 0 ? (
+                            <div className='text-center py-10'>
+                                <span className='text-gray-500 text-lg'>
+                                    Job not found
+                                </span>
+                            </div>
+                        ) : (
+                            <>
+                                {/* JOB GRID */}
+                                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4'>
+                                    {allJobs
+                                        .filter(job => !job.isRemoved)
+                                        .map((job) => (
+                                            <motion.div
+                                                key={job?.id}
+                                                initial={{ opacity: 0, x: 100 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 exit={{ opacity: 0, x: -100 }}
                                                 transition={{ duration: 0.3 }}
-                                                key={job?.id}>
-                                                <Job job={job}  />
-                                            </motion.div >
-                                        ))
-                                    }
+                                            >
+                                                <Job job={job} />
+                                            </motion.div>
+                                        ))}
                                 </div>
-                            </div>
-                        )
-                    }
+
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onPageChange={handlePageChange}
+                                />
+                            </>
+                        )}
+                    </div>
                 </div>
+
+
             </div>
-
-
         </div>
-    )
-}
+    );
+};
 
-export default Jobs
+export default Jobs;

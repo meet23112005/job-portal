@@ -1,4 +1,5 @@
-﻿using Job_portal.Domain.Entities;
+﻿using Job_portal.Application.DTOs;
+using Job_portal.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ namespace Job_portal.Application.Common.Interfaces.Repositories
 
 
         Task<IEnumerable<Company>> GetAllAsync(CancellationToken ct = default);
-        Task<IEnumerable<Company>> GetByRecruiterAsync(Guid recruiterId, CancellationToken ct = default);
+        Task<IEnumerable<CompanyDto>> GetByRecruiterAsync(Guid recruiterId, CancellationToken ct = default);
 
 
         //One recruiter CANNOT create TWO companies with SAME NAME
