@@ -39,8 +39,6 @@ namespace Job_portal.Infrastructure.Persistence.Repositories
                                 .Include(J => J.Company)
                                 .Include(J => J.Applications)
                                 .ToListAsync(ct);
-
-            
         }
 
         //public async Task<Job?> GetByIdAsync(Guid id, CancellationToken ct = default)
